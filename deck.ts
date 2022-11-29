@@ -64,6 +64,9 @@ export type TCardDefinitive = { suit: string; value: number, name: string };
 type TDeck = TCard[];
 
 
+/**
+ * Card deck class
+ */
 export class Deck {
    private readonly _deck: TDeck;
    private readonly _used: TDeck;
@@ -93,14 +96,34 @@ export class Deck {
       this._used.push(element);
       this._deck.splice(index, 1);
       if (Array.isArray(element.value)) {
+         console.log(`Which value should this card have? [${element.value}]`);
          let flag = true;
          while (flag) {
+            try {
+               const input = prompt('Value:');
+               if (!input) {
+                  console.clear();
+                  console.log(`Input missing [${element.value}]`);
+                  continue;
+               }
+
+               const number = parseInt(input);
+               if ((element.value as number[]).includes(number as number)) {
+                  element.value = number;
+                  flag = false;
+               } else {
+                  console.clear();
+                  console.log(`Input mismatch [${element.value}]`);
+               }
+            } catch (e) {
+               console.clear();
+               console.log(`Input mismatch [${element.value}]`);
+            }
 
          }
       }
-      return element;
+      return element as TCardDefinitive;
    }
-
 
    /**
     * Gives back the current remaining deck
