@@ -3,7 +3,7 @@ import { getRandomIndex, shuffleArray } from './utils.ts';
 type TCardValues = { name: string; value: number | number[] }[];
 type suitsType = string[];
 
-const suits: suitsType = ['Diamond', 'Spade', 'Heart', 'Club'];
+const suits: suitsType = ['Diamonds', 'Spades', 'Hearts', 'Clubs'];
 const cardValues: TCardValues = [
    {
       name: 'Ace',
@@ -59,28 +59,47 @@ const cardValues: TCardValues = [
    },
 ];
 
-export type TCard = { suit: string; value: number | number[], name: string };
-export type TCardDefinitive = { suit: string; value: number, name: string };
-type TDeck = TCard[];
+export type TCard = { suit: string; value: number | number[], name: string, invisible: boolean };
+export type TCardDefinitive = { suit: string; value: number, name: string, invisible: boolean };
+export type TDeck = TCard[];
 
 
 /**
  * Card deck class
  */
 export class Deck {
-   private readonly _deck: TDeck;
-   private readonly _used: TDeck;
-
    constructor() {
       this._deck = [];
       this._used = [];
-      for (let suit of suits) {
-         for (let cardValue of cardValues) {
-            this._deck.push({ suit, name: cardValue.name, value: cardValue.value });
-         }
-      }
+      this.reset(true);
+   }
 
-      shuffleArray(this._deck);
+   private _deck: TDeck;
+
+   /**
+    * Gives back the current remaining deck
+    * @returns {TDeck}
+    */
+   get deck(): TDeck {
+      return this._deck;
+   }
+
+   private _used: TDeck;
+
+   /**
+    * Gives back the already drawn cards from the original deck
+    * @returns {TDeck}
+    */
+   get used(): TDeck {
+      return this._used;
+   }
+
+   /**
+    * Gives back a combination of all cards used
+    * @returns {TDeck}
+    */
+   get all(): TDeck {
+      return [...this.used, ...this.deck];
    }
 
    /**
@@ -90,14 +109,22 @@ export class Deck {
     * If the value is uncertain it will prompt the user with a choice.
     * @returns {TCard}
     */
-   get card(): TCardDefinitive {
+   card(currentSum?: number): TCardDefinitive {
       const index = getRandomIndex(this._deck);
       const element = this._deck[index];
       this._used.push(element);
       this._deck.splice(index, 1);
       if (Array.isArray(element.value)) {
-         console.log(`Which value should this card have? [${element.value}]`);
-         let flag = true;
+         let flag = false;
+         if (currentSum !== undefined) {
+            let numbers = element.value as number[];
+            const min = Math.min(...numbers);
+            const max = Math.max(...numbers);
+            element.value = ((currentSum + max) > 21) ? min : max;
+         } else {
+            console.log(`You drew an ${element.name + ' of ' + element.suit}, which value should this card have? [${element.value}]`);
+            flag = true;
+         }
          while (flag) {
             try {
                const input = prompt('Value:');
@@ -126,29 +153,18 @@ export class Deck {
    }
 
    /**
-    * Gives back the current remaining deck
-    * @returns {TDeck}
+    * Reset deck to new random cards
     */
-   get deck(): TDeck {
-      return this._deck;
-   }
-
-   /**
-    * Gives back the already drawn cards from the original deck
-    * @returns {TDeck}
-    */
-   get used(): TDeck {
-      return this._used;
-   }
-
-   /**
-    * Gives back a combination of all cards used
-    * @returns {TDeck}
-    */
-   get all(): TDeck {
-      return [...this.used, ...this.deck];
+   reset(init?: boolean) {
+      if (!init) {
+         this._deck = [];
+         this._used = [];
+      }
+      for (let suit of suits) {
+         for (let cardValue of cardValues) {
+            this._deck.push({ suit, name: cardValue.name, value: cardValue.value, invisible: false });
+         }
+      }
+      shuffleArray(this._deck);
    }
 }
-
-const deck = new Deck();
-console.log(deck.card);
