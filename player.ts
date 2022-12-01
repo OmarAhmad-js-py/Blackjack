@@ -1,6 +1,5 @@
 import { Deck, TCardDefinitive } from './deck.ts';
 import { randomUUID } from 'https://deno.land/std@0.165.0/node/crypto.ts';
-import { hud } from './logger.ts';
 
 interface IPlayerProps {
    name?: string;
@@ -17,7 +16,7 @@ export class Player {
    private readonly name: string;
    private dealer: boolean;
    private status?: boolean;
-   private deck: Deck;
+   private readonly deck: Deck;
    private readonly _hand: TCardDefinitive[];
 
    constructor(props: IPlayerProps) {
@@ -25,8 +24,8 @@ export class Player {
       this.name = props.dealer!!
          ? 'Dealer'
          : props.name
-         ? props.name
-         : randomUUID();
+            ? props.name
+            : randomUUID();
       this.dealer = props.dealer!!;
       this.status = undefined;
       this._hand = [];
@@ -55,11 +54,20 @@ export class Player {
       return false;
    }
 
+   get didWin(): boolean {
+      let cardSum = this.getCardSum();
+      if (cardSum === 21) {
+         console.log('You won. Your score is 21');
+         return true;
+      }
+      return false;
+   }
+
    getCardSum(): number {
       return this._hand.reduce((acc, x) => acc + x.value, 0);
    }
 
-   handleTurn() {
+   handleTurn(callback: (skipped?: string) => void) {
       if (this.getCardSum() === 21) {
          console.log(
             `Player ${this.name} won immediately because they got a sum of 21`,
@@ -72,13 +80,13 @@ export class Player {
                this.status === false
                   ? 'lost'
                   : this.status === true
-                  ? 'won'
-                  : 'unknown'
+                     ? 'won'
+                     : 'unknown'
             }, skipping...`,
          );
          return;
       }
-      if (!this.cardPrompt()) return;
+      if (!this.cardPrompt(callback)) return;
    }
 
    handleDraw(props: IHandeDrawProps): void {
@@ -86,42 +94,38 @@ export class Player {
       const card = this.deck.card(this.getCardSum());
       if (invisible) card.invisible = true;
       !silent &&
-         console.log(
-            `${this.name} drew a card and got ${card.name} of ${card.suit}`,
-         );
+      console.log(
+         `${this.name} drew a card and got ${card.name} of ${card.suit}`,
+      );
       this._hand.push(card);
    }
 
-   cardPrompt(): boolean {
+   cardPrompt(callback: (skipped?: string) => void): boolean {
       let flag = true;
       while (flag) {
+         console.log(`It's ${this.name}'s turn:`);
          const x = prompt('[D]raw another card or [S]kip ?');
          if (!x) continue;
          const input = x.toLowerCase();
          switch (input) {
             case 'd': {
                this.handleDraw({});
-               if (this.didLose) return false;
-               flag = false;
-               break;
+               if (this.didLose || this.didWin) {
+                  callback();
+                  if (this.didWin) console.log(this.name + " won");
+                  return false;
+               }
+               callback();
+               continue;
             }
             case 's': {
                console.log('Round skipped');
+               callback(this.name);
                flag = false;
-               break;
+               return;
             }
          }
       }
       return true;
    }
 }
-
-const deck = new Deck();
-const dealer = new Player({ deck, dealer: true });
-const one = new Player({ deck, name: 'Player 1' });
-const two = new Player({ deck, name: 'Player 2' });
-hud({ deck: deck, player: [one, two], dealer: dealer });
-one.handleTurn();
-hud({ deck: deck, player: [one, two], dealer: dealer });
-one.handleTurn();
-hud({ deck: deck, player: [one, two], dealer: dealer });
