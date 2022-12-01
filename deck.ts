@@ -59,10 +59,19 @@ const cardValues: TCardValues = [
    },
 ];
 
-export type TCard = { suit: string; value: number | number[], name: string, invisible: boolean };
-export type TCardDefinitive = { suit: string; value: number, name: string, invisible: boolean };
+export type TCard = {
+   suit: string;
+   value: number | number[];
+   name: string;
+   invisible: boolean;
+};
+export type TCardDefinitive = {
+   suit: string;
+   value: number;
+   name: string;
+   invisible: boolean;
+};
 export type TDeck = TCard[];
-
 
 /**
  * Card deck class
@@ -77,8 +86,8 @@ export class Deck {
    private _deck: TDeck;
 
    /**
-    * Gives back the current remaining deck
-    * @returns {TDeck}
+    * Retrieve a TDeck object representing the current deck of remaining cards.
+    * @return {TDeck} The deck of remaining cards.
     */
    get deck(): TDeck {
       return this._deck;
@@ -87,8 +96,8 @@ export class Deck {
    private _used: TDeck;
 
    /**
-    * Gives back the already drawn cards from the original deck
-    * @returns {TDeck}
+    * Gets the used cards
+    * @returns {TDeck} The used deck
     */
    get used(): TDeck {
       return this._used;
@@ -96,18 +105,19 @@ export class Deck {
 
    /**
     * Gives back a combination of all cards used
-    * @returns {TDeck}
+    * @returns {TDeck} All cards that were originally in the deck
     */
    get all(): TDeck {
       return [...this.used, ...this.deck];
    }
 
    /**
-    * Draws a card, removes it from the deck and adds it to the used array,
-    * then returns the object with the card values.
+    * @function card
+    * @param {number} [currentSum] - Current sum of cards
+    * @returns {TCardDefinitive} Object containing the name, suit, and value of the card
     *
-    * If the value is uncertain it will prompt the user with a choice.
-    * @returns {TCard}
+    * Draws a card from the deck, determines the value of the card based on the currentSum if the card has an array of values,
+    * and returns the card object.
     */
    card(currentSum?: number): TCardDefinitive {
       const index = getRandomIndex(this._deck);
@@ -120,16 +130,19 @@ export class Deck {
             let numbers = element.value as number[];
             const min = Math.min(...numbers);
             const max = Math.max(...numbers);
-            element.value = ((currentSum + max) > 21) ? min : max;
+            element.value = currentSum + max > 21 ? min : max;
          } else {
-            console.log(`You drew an ${element.name + ' of ' + element.suit}, which value should this card have? [${element.value}]`);
+            console.log(
+               `You drew an ${
+                  element.name + ' of ' + element.suit
+               }, which value should this card have? [${element.value}]`,
+            );
             flag = true;
          }
          while (flag) {
             try {
                const input = prompt('Value:');
                if (!input) {
-                  console.clear();
                   console.log(`Input missing [${element.value}]`);
                   continue;
                }
@@ -139,21 +152,19 @@ export class Deck {
                   element.value = number;
                   flag = false;
                } else {
-                  console.clear();
                   console.log(`Input mismatch [${element.value}]`);
                }
             } catch (e) {
-               console.clear();
                console.log(`Input mismatch [${element.value}]`);
             }
-
          }
       }
       return element as TCardDefinitive;
    }
 
    /**
-    * Reset deck to new random cards
+    * Resets the deck of cards
+    * @param {boolean} [init] - whether to initalize the deck or not
     */
    reset(init?: boolean) {
       if (!init) {
@@ -162,7 +173,12 @@ export class Deck {
       }
       for (let suit of suits) {
          for (let cardValue of cardValues) {
-            this._deck.push({ suit, name: cardValue.name, value: cardValue.value, invisible: false });
+            this._deck.push({
+               suit,
+               name: cardValue.name,
+               value: cardValue.value,
+               invisible: false,
+            });
          }
       }
       shuffleArray(this._deck);
