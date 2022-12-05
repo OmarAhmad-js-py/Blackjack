@@ -12,11 +12,11 @@ for (let i = 0; i < amount; i++) {
    players.push(new Player({ deck, name: `Player ${i}` }));
 }
 const logger = new Logger({ deck, dealer, player: players });
-const hud = (skipped?: boolean) => logger.hud(skipped);
+const hud = (skipped?: string) => logger.hud({ skipped });
 
 hud();
 for (let i = 0; i < players.length; i++) {
    players[i].handleTurn(hud);
 }
-//TODO check for dealer cards
-console.log('Game ended');
+
+logger.hud({end: true})

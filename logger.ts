@@ -19,14 +19,14 @@ export class Logger {
       this.player = player;
    }
 
-
    /**
     * @function interface
     * @param {ILoggerProps} props - The props to configure the interface.
     * @description Outputs the blackjack game information to the console.
     */
-   hud(skipped?: string) {
+   hud(props: { skipped?: string; end?: boolean }) {
       const { dealer, deck, player } = this;
+      const { end, skipped } = props;
       console.clear();
       console.info(
          `Blackjack game running with ${player.length} player against the Dealer \n`,
@@ -51,7 +51,9 @@ export class Logger {
             cardRow.map(x => {
                if (Array.isArray(x)) return '';
                else {
-                  return x.invisible ? cardHiddenText : `${x.name} of ${x.suit}`;
+                  return !end && x.invisible
+                     ? cardHiddenText
+                     : `${x.name} of ${x.suit}`;
                }
             }),
          );
@@ -63,10 +65,10 @@ export class Logger {
                   .map(
                      y =>
                         (typeof y === 'string'
-                              ? y
-                              : y.invisible
-                                 ? cardHiddenText
-                                 : `${y.name} of ${y.suit}`
+                           ? y
+                           : !end && y.invisible
+                           ? cardHiddenText
+                           : `${y.name} of ${y.suit}`
                         ).length,
                   )
                   .reduce((acc, i) => (acc > i ? acc : i)),
@@ -85,8 +87,17 @@ export class Logger {
          divider('-'),
          ...tabularData,
          divider('-'),
-         loopData.map(x => x.hand.map(y => y.invisible).every(z => z === false) ? displaySum(x) : 'Hidden'),
+         loopData.map(x =>
+            !end
+               ? x.hand.map(y => y.invisible).every(z => z === false)
+                  ? displaySum(x)
+                  : 'Hidden'
+               : displaySum(x),
+         ),
       ]);
-      skipped && console.log(skipped + " skipped this round");
+      skipped && console.log(skipped + ' skipped this round');
+      if (end) {
+         console.log('Game ended, all cards revealed');
+      }
    }
 }

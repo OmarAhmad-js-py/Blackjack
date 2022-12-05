@@ -24,8 +24,8 @@ export class Player {
       this.name = props.dealer!!
          ? 'Dealer'
          : props.name
-            ? props.name
-            : randomUUID();
+         ? props.name
+         : randomUUID();
       this.dealer = props.dealer!!;
       this.status = undefined;
       this._hand = [];
@@ -55,11 +55,7 @@ export class Player {
    }
 
    get didWin(): boolean {
-      let cardSum = this.getCardSum();
-      if (cardSum === 21) {
-         console.log('You won. Your score is 21');
-         return true;
-      }
+      if (this.getCardSum() === 21) return true;
       return false;
    }
 
@@ -80,8 +76,8 @@ export class Player {
                this.status === false
                   ? 'lost'
                   : this.status === true
-                     ? 'won'
-                     : 'unknown'
+                  ? 'won'
+                  : 'unknown'
             }, skipping...`,
          );
          return;
@@ -94,9 +90,9 @@ export class Player {
       const card = this.deck.card(this.getCardSum());
       if (invisible) card.invisible = true;
       !silent &&
-      console.log(
-         `${this.name} drew a card and got ${card.name} of ${card.suit}`,
-      );
+         console.log(
+            `${this.name} drew a card and got ${card.name} of ${card.suit}`,
+         );
       this._hand.push(card);
    }
 
@@ -112,7 +108,7 @@ export class Player {
                this.handleDraw({});
                if (this.didLose || this.didWin) {
                   callback();
-                  if (this.didWin) console.log(this.name + " won");
+                  if (this.didWin) console.log(this.name + ' won');
                   return false;
                }
                callback();
@@ -122,7 +118,7 @@ export class Player {
                console.log('Round skipped');
                callback(this.name);
                flag = false;
-               return;
+               return false;
             }
          }
       }

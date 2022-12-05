@@ -1,5 +1,5 @@
 /**
- * Return an random index of a given array
+ * Return a random index of a given array
  * @param {any[]} values
  * @returns {number}
  */
