@@ -64,6 +64,7 @@ export class Player {
    }
 
    handleTurn(callback: (skipped?: string) => void) {
+      if (this.deck.left === 0) return;
       if (this.getCardSum() === 21) {
          console.log(
             `Player ${this.name} won immediately because they got a sum of 21`,

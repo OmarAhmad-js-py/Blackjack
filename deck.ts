@@ -93,6 +93,10 @@ export class Deck {
       return this._deck;
    }
 
+   get left():number {
+      return this._deck.length;
+   }
+
    private _used: TDeck;
 
    /**

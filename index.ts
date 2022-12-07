@@ -9,7 +9,7 @@ const player = prompt('How many players do you want to have 1-4');
 const amount = parseInt(player as string);
 const players = [];
 for (let i = 0; i < amount; i++) {
-   players.push(new Player({ deck, name: `Player ${i}` }));
+   players.push(new Player({ deck, name: `Player ${i +1}` }));
 }
 const logger = new Logger({ deck, dealer, player: players });
 const hud = (skipped?: string) => logger.hud({ skipped });

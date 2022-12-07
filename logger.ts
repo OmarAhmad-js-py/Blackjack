@@ -24,7 +24,7 @@ export class Logger {
     * @param {ILoggerProps} props - The props to configure the interface.
     * @description Outputs the blackjack game information to the console.
     */
-   hud(props: { skipped?: string; end?: boolean }) {
+   hud(props: { skipped?: string; end?: boolean; }) {
       const { dealer, deck, player } = this;
       const { end, skipped } = props;
       console.clear();
@@ -95,9 +95,18 @@ export class Logger {
                : displaySum(x),
          ),
       ]);
-      skipped && console.log(skipped + ' skipped this round');
+      skipped &&
+         (deck.left !== 0
+            ? console.log(skipped + ' skipped this round')
+            : console.log('Deck empty, game ended'));
       if (end) {
          console.log('Game ended, all cards revealed');
+         const highestSum = [...loopData, dealer]
+            .map(x => x.getCardSum())
+            .reduce((acc, i) => (i <= 21 ? (acc > i ? acc : i) : acc));
+         console.log(highestSum);
+         const highest = loopData.filter(x => x.getCardSum() === highestSum);
+         console.log(highest.map(x => x.getName));
       }
    }
 }
