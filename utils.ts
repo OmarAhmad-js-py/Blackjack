@@ -1,25 +1,18 @@
 /**
- * Return a random index of a given array
- * @param {any[]} values
- * @returns {number}
+ * This function takes an array of values as an argument and returns a random index of that array.
+ *
+ * @param {any[]} values - The array of values to select random index from.
+ * @returns {number} - The random index of the passed array.
  */
 export function getRandomIndex(values: any[]): number {
    return Math.floor(Math.random() * values.length);
 }
 
 /**
- * Returns a random item of a given array
- * @param {any[]} values
- * @returns {any}
- */
-export function getRandomValue(values: any[]): any {
-   return values[getRandomIndex(values)];
-}
-
-/**
- * Takes an array of values and rearranges them randomly
- * @param {any[]} array
- * @returns {any[]}
+ * This function shuffles an array of any type by randomly swapping elements.
+ * @param {any[]} array - Takes an array of any type as an input
+ * @returns {any[]} - Returns an array of any type, with the values randomly shuffled
+ *
  */
 export function shuffleArray(array: any[]) {
    let currentIndex = array.length,

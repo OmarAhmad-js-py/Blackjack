@@ -93,7 +93,7 @@ export class Deck {
       return this._deck;
    }
 
-   get left():number {
+   get left(): number {
       return this._deck.length;
    }
 
@@ -107,6 +107,7 @@ export class Deck {
       return this._used;
    }
 
+   // noinspection JSUnusedGlobalSymbols
    /**
     * Gives back a combination of all cards used
     * @returns {TDeck} All cards that were originally in the deck
@@ -131,7 +132,7 @@ export class Deck {
       if (Array.isArray(element.value)) {
          let flag = false;
          if (currentSum !== undefined) {
-            let numbers = element.value as number[];
+            const numbers = element.value as number[];
             const min = Math.min(...numbers);
             const max = Math.max(...numbers);
             element.value = currentSum + max > 21 ? min : max;
@@ -144,21 +145,17 @@ export class Deck {
             flag = true;
          }
          while (flag) {
-            try {
-               const input = prompt('Value:');
-               if (!input) {
-                  console.log(`Input missing [${element.value}]`);
-                  continue;
-               }
+            const input = prompt('Value:');
+            if (!input) {
+               console.log(`Input missing [${element.value}]`);
+               continue;
+            }
 
-               const number = parseInt(input);
-               if ((element.value as number[]).includes(number as number)) {
-                  element.value = number;
-                  flag = false;
-               } else {
-                  console.log(`Input mismatch [${element.value}]`);
-               }
-            } catch (e) {
+            const number = parseInt(input);
+            if ((element.value as number[]).includes(number as number)) {
+               element.value = number;
+               flag = false;
+            } else {
                console.log(`Input mismatch [${element.value}]`);
             }
          }
@@ -175,8 +172,8 @@ export class Deck {
          this._deck = [];
          this._used = [];
       }
-      for (let suit of suits) {
-         for (let cardValue of cardValues) {
+      for (const suit of suits) {
+         for (const cardValue of cardValues) {
             this._deck.push({
                suit,
                name: cardValue.name,

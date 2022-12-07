@@ -24,9 +24,9 @@ export class Logger {
     * @param {ILoggerProps} props - The props to configure the interface.
     * @description Outputs the blackjack game information to the console.
     */
-   hud(props: { skipped?: string; end?: boolean; }) {
+   hud(props: { skipped?: string; end?: boolean; custom?: string }) {
       const { dealer, deck, player } = this;
-      const { end, skipped } = props;
+      const { end, skipped, custom } = props;
       console.clear();
       console.info(
          `Blackjack game running with ${player.length} player against the Dealer \n`,
@@ -36,10 +36,10 @@ export class Logger {
       const highest = loopData
          .map(x => x.hand.length)
          .reduce((acc, i) => (acc > i ? acc : i));
-      const tabularData: any[] = [];
+      const tabularData = [];
       for (let i = 0; i <= highest - 1; i++) {
          const cardRow = [];
-         for (let data of loopData) {
+         for (const data of loopData) {
             const currentCard = data.hand[i];
             if (!currentCard) {
                cardRow.push([]);
@@ -58,7 +58,7 @@ export class Logger {
             }),
          );
       }
-      let divider = (s: string) =>
+      const divider = (s: string) =>
          loopData.map(x =>
             s.repeat(
                [...x.hand, x.getName]
@@ -76,7 +76,7 @@ export class Logger {
          );
 
       function displaySum(x: Player) {
-         let sum = x.getCardSum();
+         const sum = x.getCardSum();
          if (sum > 21) return sum + ' ' + 'Lost';
          if (sum === 21) return sum + ' ' + 'Won';
          if (sum < 21) return sum;
@@ -100,13 +100,29 @@ export class Logger {
             ? console.log(skipped + ' skipped this round')
             : console.log('Deck empty, game ended'));
       if (end) {
-         console.log('Game ended, all cards revealed');
-         const highestSum = [...loopData, dealer]
+         console.log('Game ended, all cards revealed.');
+         custom && console.log(custom);
+         const highestSum = [...loopData]
             .map(x => x.getCardSum())
-            .reduce((acc, i) => (i <= 21 ? (acc > i ? acc : i) : acc));
-         console.log(highestSum);
+            .reduce((acc, i) =>
+               acc > 21 ? i : i <= 21 ? (acc > i ? acc : i) : acc,
+            );
          const highest = loopData.filter(x => x.getCardSum() === highestSum);
-         console.log(highest.map(x => x.getName));
+         if (highest.length > 0 && highestSum > 0) {
+            console.log(
+               `The highest allowed score of this round was ${highestSum} which ${
+                  highest.length === 1 && highest[0].isDealer ? 'the ' : ''
+               }${
+                  highest.length > 1
+                     ? `${highest.length} players got`
+                     : `${highest[0].getName} got`
+               }.`,
+            );
+            if (highest.length > 1) {
+               console.log(`Players won with score of ${highestSum}:`);
+               highest.map(x => console.log(` - ${x.getName}`));
+            }
+         } else console.log('Nobody won');
       }
    }
 }
