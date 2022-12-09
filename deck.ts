@@ -172,14 +172,18 @@ export class Deck {
          this._deck = [];
          this._used = [];
       }
-      for (const suit of suits) {
-         for (const cardValue of cardValues) {
-            this._deck.push({
-               suit,
-               name: cardValue.name,
-               value: cardValue.value,
-               invisible: false,
-            });
+
+      //Raising the deck amount to 4
+      for (let i = 0; i < 4; i++) {
+         for (const suit of suits) {
+            for (const cardValue of cardValues) {
+               this._deck.push({
+                  suit,
+                  name: cardValue.name,
+                  value: cardValue.value,
+                  invisible: false,
+               });
+            }
          }
       }
       shuffleArray(this._deck);
