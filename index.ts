@@ -3,6 +3,7 @@ import { Player } from './player.ts';
 import { Logger } from './logger.ts';
 import axiod from 'https://deno.land/x/axiod/mod.ts';
 import process from 'https://deno.land/std@0.165.0/node/process.ts';
+import { Dealer } from './dealer.ts';
 
 //noinspection SpellCheckingInspection
 interface IJoke {
@@ -37,8 +38,9 @@ function getPlayerAmount(): number {
       }
       console.log('Please enter a number in the given range.');
    }
-   return playerAmount;1
+   return playerAmount;
 }
+
 process.stdout.write('Getting joke...');
 
 async function sleep(ms: number) {
@@ -50,7 +52,7 @@ await axiod
       'https://v2.jokeapi.dev/joke/Programming?blacklistFlags=nsfw,racist,sexist,explicit',
    )
    .then(async x => {
-      console.log("Done");
+      console.log('Done');
       const data = x.data as IJoke;
       if (data.type === 'single') {
          console.log("Today's joke:\n" + x.data.joke);
@@ -66,7 +68,7 @@ await axiod
    });
 
 const deck = new Deck();
-const dealer = new Player({ deck, dealer: true });
+const dealer = new Dealer({ deck });
 
 const amount = getPlayerAmount();
 const players = [];
