@@ -1,0 +1,283 @@
+<!doctype html>
+<html lang='en'>
+<head>
+    <meta charset='UTF-8'>
+    <meta name='viewport'
+          content='width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0'>
+    <meta http-equiv='X-UA-Compatible' content='ie=edge'>
+    <title>Document</title>
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Ysabeau:ital,wght@0,1;0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,1;1,100;1,200;1,300;1,400;1,500;1,600&display=swap"
+          rel="stylesheet">
+</head>
+<body>
+<div class='container'>
+    <h1 style='width: 100%'>
+        Game summary view.
+    </h1>
+    <% for (player of players) { %>
+        <div class='player border'>
+            <h2 class='acent'>
+            <span class='material-symbols-outlined'>
+                account_circle
+            </span>
+                <span>
+            <%= player.name; %>
+            </span>
+            </h2>
+            <h1 class='acent jbetween'>
+                <span class='<%= player.didLose ? "lost-color" : player.didWin ? "win-color" : "" %>'>
+            Points: <%= player.getCardSum(); %>
+            </span>
+            </h1>
+            <div class='cards'>
+                <% for (card of player._hand) { %>
+                    <div class='acent card border'>
+                        <img src='<%= card.suit.toLowerCase(); %>.svg'>
+                        <span>
+                         <%= card.value %> of <%= card.suit; %>
+                    </span>
+                        <% if (card.invisible) { %>
+                            <span class='visibility material-symbols-outlined'>
+                            visibility
+                        </span>
+                        <% } %>
+                    </div>
+                <% } %>
+            </div>
+        </div>
+    <% } %>
+    <div class='dealer border'>
+        <h2 class='acent'>
+            <span class='material-symbols-outlined'>
+                account_circle
+            </span>
+            <span>Dealer</span>
+        </h2>
+        <h1 class='acent jbetween'>
+                <span class='<%= dealer.didLose ? "lost-color" : dealer.didWin ? "win-color" : "" %>'>
+            Points: <%= dealer.getCardSum(); %>
+            </span>
+        </h1>
+        <div class='cards'>
+            <% for (card of dealer._hand) { %>
+                <div class='acent card border'>
+                    <img src='<%= card.suit.toLowerCase(); %>.svg'>
+                    <span>
+                            <%= card.value %> of <%= card.suit; %>
+                        </span>
+                    <% if (card.invisible) { %>
+                        <span class='visibility material-symbols-outlined'>
+                            visibility
+                        </span>
+                    <% } %>
+                </div>
+            <% } %>
+        </div>
+    </div>
+    <code class='logs'>
+        <% for (item of logs) { %>
+            <div class='log'>
+                <%= item; %>
+            </div>
+        <% } %>
+    </code>
+</div>
+</body>
+</html>
+<style>
+    body, html {
+        margin: 0;
+        font-family: 'Ysabeau', sans-serif;
+    }
+
+    .btn {
+        flex: 1 0 auto;
+        padding: 0.6rem;
+        border-radius: 5px;
+        text-align: center;
+        font-size: 1.2rem;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+
+    .btn:hover {
+        border-radius: 10px;
+    }
+
+    .secondary {
+        background-color: #e0e0e0;
+        border: 2px solid #ccc;
+    }
+
+    .secondary:hover {
+        background-color: #b0b0b0;
+    }
+
+    .primary {
+        background-color: #4dadf1;
+        border: 2px solid #1985ce;
+    }
+
+    .primary:hover {
+        background-color: #1985ce;
+    }
+
+    .actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+
+    .container {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        max-width: 1000px;
+        margin: 2rem auto;
+        padding: 1rem;
+        gap: 10px;
+    }
+
+    .player {
+        width: 35%;
+        display: flex;
+        flex-direction: column;
+        padding: 1rem;
+        gap: 1rem;
+        flex: 1 0 auto;
+    }
+
+    .single-player {
+        min-width: 100px;
+        display: flex;
+        flex: 1 0 auto;
+        padding: 1rem;
+    }
+
+    .dealer {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        padding: 1rem;
+        gap: 1rem;
+    }
+
+    .cards {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+
+    .cards .card {
+        flex: 1 0 auto;
+        padding: 10px;
+    }
+
+    .card img {
+        height: 20px;
+        width: 20px;
+        object-fit: contain;
+    }
+
+    .visibility {
+        margin-left: auto;
+    }
+
+    .players {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        width: 100%;
+    }
+
+    .logs {
+        width: 100%;
+        background-color: #e0e0e0;
+        padding: 1rem;
+    }
+
+    .log {
+        color: #333;
+        margin: 0.5rem 0;
+
+    }
+
+</style>
+<style>
+    a {
+        text-decoration: none;
+        color: inherit;
+        all: unset;
+        cursor: pointer;
+    }
+
+    h1, h2, h3, h4, h5, h6, p {
+        font-family: 'Ysabeau', sans-serif;
+        margin: 0;
+    }
+
+    .border {
+        border: 1px solid #ccc;
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+        border-radius: 5px;
+    }
+
+    .lost-color {
+        color: #cc3e30;
+    }
+
+    .lost-bg {
+        background-color: #ecaea8;
+    }
+
+    .log-border {
+        border-color: #cc3e30;
+    }
+
+    .win-color {
+        color: #aff14d;
+    }
+
+    .win-bg {
+        background-color: #d4f5c3;
+    }
+
+    .win-border {
+        border-color: #aff14d;
+    }
+
+
+    .current {
+        background-color: #c3dff5;
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.4);
+    }
+
+    .acent {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .jbetween {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .col {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        width: 100%;
+    }
+
+    .material-symbols-outlined {
+        font-variation-settings: 'FILL' 0,
+        'wght' 400,
+        'GRAD' 0,
+        'opsz' 48
+    }
+</style>

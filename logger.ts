@@ -24,7 +24,12 @@ export class Logger {
     * @param {ILoggerProps} props - The props to configure the interface.
     * @description Outputs the blackjack game information to the console.
     */
-   hud(props: { skipped?: string; end?: boolean; custom?: string }) {
+   hud(props: {
+      skipped?: string;
+      end?: boolean;
+      custom?: string;
+      api?: boolean;
+   }) {
       const { dealer, deck, player } = this;
       const { end, skipped, custom } = props;
       console.clear();
@@ -82,6 +87,8 @@ export class Logger {
          if (sum < 21) return sum;
       }
 
+      const logs = [];
+
       console.table([
          loopData.map(x => x.getName),
          divider('-'),
@@ -101,6 +108,7 @@ export class Logger {
             : console.log('Deck empty, game ended'));
       if (end) {
          console.log('Game ended, all cards revealed.');
+         logs.push('Game ended, all cards revealed.');
          custom && console.log(custom);
          const highestSum = [...loopData]
             .map(x => x.getCardSum())
@@ -108,21 +116,31 @@ export class Logger {
                acc > 21 ? i : i <= 21 ? (acc > i ? acc : i) : acc,
             );
          const highest = loopData.filter(x => x.getCardSum() === highestSum);
+         const data1 = `The highest allowed score of this round was ${highestSum} which ${
+            highest.length === 1 && highest[0].isDealer ? 'the ' : ''
+         }${
+            highest.length > 1
+               ? `${highest.length} players got`
+               : `${highest[0].getName} got`
+         }.`;
+         const data2 = `Players won with score of ${highestSum}:`;
+
          if (highest.length > 0 && highestSum > 0) {
-            console.log(
-               `The highest allowed score of this round was ${highestSum} which ${
-                  highest.length === 1 && highest[0].isDealer ? 'the ' : ''
-               }${
-                  highest.length > 1
-                     ? `${highest.length} players got`
-                     : `${highest[0].getName} got`
-               }.`,
-            );
+            console.log(data1);
+            logs.push(data1);
             if (highest.length > 1) {
-               console.log(`Players won with score of ${highestSum}:`);
-               highest.map(x => console.log(` - ${x.getName}`));
+               console.log(data2);
+               logs.push(data2);
+               highest.map(x => {
+                  console.log(` - ${x.getName}`);
+                  logs.push(` - ${x.getName}`);
+               });
             }
-         } else console.log('Nobody won');
+         } else {
+            console.log('Nobody won');
+            logs.push('Nobody won');
+         }
+         if (props.api) return logs;
       }
    }
 }
